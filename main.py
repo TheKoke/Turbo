@@ -2,7 +2,7 @@ import sys
 import asyncio
 import numpy as np
 
-from back import *
+from core.back import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from matplotlib.figure import Figure
