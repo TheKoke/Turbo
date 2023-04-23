@@ -30,20 +30,22 @@ class CSVParser:
         return self.take_last_file(parameter)[-1]
 
 
-class Checker:
-    def __init__(self, parser: CSVParser) -> None:
-        self.parser = parser
+class Observer:
+    def __init__(self, note: Note) -> None:
+        self.note = note
+        self.parser = CSVParser(note)
+
         self.parameters = self.parser.get_parameters()
 
     def set_norm_ranges(self, ranges: dict[str, tuple[float, float]]) -> None:
         for param in ranges:
-            if param in self.parser.note.normal_ranges:
-                self.parser.note.normal_ranges[param] = ranges[param]
+            if param in self.note.normal_ranges:
+                self.note.normal_ranges[param] = ranges[param]
 
     def check(self) -> bool:
         for param in self.parameters:
-            if self.parser.take_last_note(param) <= self.parser.note.normal_ranges[param][0] or \
-                    self.parser.take_last_note(param) >= self.parser.note.normal_ranges[param][1]:
+            if self.parser.take_last_note(param) <= self.note.normal_ranges[param][0] or \
+                    self.parser.take_last_note(param) >= self.note.normal_ranges[param][1]:
                 return False
 
         return True
@@ -56,4 +58,4 @@ class Checker:
 
 
 if __name__ == '__main__':
-    csv = CSVParser('C:\\Users\\Damir\\Desktop\\.phys', 'out.csv')
+    pass
