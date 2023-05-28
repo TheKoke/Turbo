@@ -1,4 +1,21 @@
-from notes import Note
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
+
+class Note:
+    def __init__(self, path: str, quiz_frequency: float, file_frequency: float,) -> None:
+        self.path = path
+        self.normal_ranges: dict[str, tuple[float, float]] = dict()
+
+        self.line_counter = 0
+        self.quiz_frequency = quiz_frequency
+        self.new_file_frequency = file_frequency
+
+    def main_file(self) -> str:
+        if '.csv' in self.path:
+            return ''
+
+        return f'{self.path}\\out.csv'
 
 
 class CSVParser:
@@ -55,6 +72,11 @@ class Observer:
             return 'okay'
 
         return f'{parameter} is out of normal range'
+
+
+class Painter:
+    def __init__(self) -> None:
+        pass
 
 
 if __name__ == '__main__':

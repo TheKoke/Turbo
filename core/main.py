@@ -1,8 +1,7 @@
 import sys
-import asyncio
 import numpy as np
 
-from core.back import *
+from back import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from matplotlib.figure import Figure
