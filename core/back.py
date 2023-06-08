@@ -3,7 +3,7 @@ from matplotlib.figure import Figure
 
 
 class Note:
-    def __init__(self, path: str, quiz_frequency: float, file_frequency: float,) -> None:
+    def __init__(self, path: str, quiz_frequency: float, file_frequency: float) -> None:
         self.path = path
         self.normal_ranges: dict[str, tuple[float, float]] = dict()
 
@@ -11,6 +11,7 @@ class Note:
         self.quiz_frequency = quiz_frequency
         self.new_file_frequency = file_frequency
 
+    @property
     def main_file(self) -> str:
         if '.csv' in self.path:
             return ''
@@ -24,27 +25,37 @@ class CSVParser:
 
     def get_parameters(self) -> list[str]:
         first_file = self.get_files()[0]
-        return open(f'{self.note.path}//{first_file}').readline().split(';')
+        return open(f'{self.note.path}\\{first_file}').readline().split(';')
 
     def get_files(self) -> list[str]:
-        main_file = open(f'{self.note.path}\\{self.note.main_file()}.csv').readlines()
+        main_file = open(f'{self.note.path}\\{self.note.main_file}.csv').readlines()
         return [main_file[i].split(';')[1] for i in range(len(main_file))]
+    
+    def take_last_note(self, parameter: str) -> float:
+        return self.take_last_file(parameter)[-1]
+    
+    def take_last_file(self, parameter: str) -> list[float]:
+        last = self.get_files()[-1]
+        return self.get_parameter_values(parameter, last)
 
     def get_parameter_values(self, parameter: str, file_name: str) -> list[float]:
+        self.everything_is_ok(file_name, parameter)
+
         params = self.get_parameters()
         index = params.index(parameter) if parameter in params else -1
 
-        if file_name not in self.get_files() or index == -1:
-            return []
-
         log = open(f'{self.note.path}\\{file_name}').readlines()[1:]
         return [float(log[i].split(';')[index]) for i in range(len(log))]
+    
+    def everything_is_ok(self, file_name: str, parameter: str) -> None:
+        params = self.get_parameters()
+        index = params.index(parameter) if parameter in params else -1
 
-    def take_last_file(self, parameter: str) -> list[float]:
-        pass
-
-    def take_last_note(self, parameter: str) -> float:
-        return self.take_last_file(parameter)[-1]
+        if file_name not in self.get_files():
+            raise RuntimeError(f"File {file_name}.csv doesn't exist.")
+        
+        if index == -1:
+            raise RuntimeError(f"Pump doesn't have {parameter} parameter to output show.")
 
 
 class Observer:

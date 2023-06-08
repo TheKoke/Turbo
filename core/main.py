@@ -8,5 +8,34 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT, FigureCanvasQTAgg
 
 
+class Background(QThread):
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class MainWindow(QWidget):
+    def __init__(self, note: Note) -> None:
+        super().__init__()
+
+        self.parser = CSVParser(note)
+        self.observer = Observer(note)
+
+
+class StartWindow(QWidget):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def show_time(self) -> None:
+        self.window = MainWindow(self.make_note())
+        self.window.show()
+        self.close()
+
+    def make_note(self) -> Note:
+        pass
+
+
 if __name__ == '__main__':
-    pass
+    app = QApplication(sys.argv)
+    window = StartWindow()
+    window.show()
+    sys.exit(app.exec_())
