@@ -25,10 +25,10 @@ class CSVParser:
 
     def get_parameters(self) -> list[str]:
         first_file = self.get_files()[0]
-        return open(f'{self.note.path}\\{first_file}').readline().split(';')
+        return open(f'{self.note.path}\\{first_file}', 'r').readline().split(';')
 
     def get_files(self) -> list[str]:
-        main_file = open(f'{self.note.path}\\{self.note.main_file}.csv').readlines()
+        main_file = open(f'{self.note.path}\\{self.note.main_file}.csv', 'r').readlines()
         return [main_file[i].split(';')[1] for i in range(len(main_file))]
     
     def take_last_note(self, parameter: str) -> float:
@@ -44,7 +44,7 @@ class CSVParser:
         params = self.get_parameters()
         index = params.index(parameter) if parameter in params else -1
 
-        log = open(f'{self.note.path}\\{file_name}').readlines()[1:]
+        log = open(f'{self.note.path}\\{file_name}', 'r').readlines()[1:]
         return [float(log[i].split(';')[index]) for i in range(len(log))]
     
     def everything_is_ok(self, file_name: str, parameter: str) -> None:
@@ -65,29 +65,38 @@ class Observer:
 
         self.parameters = self.parser.get_parameters()
 
+    def trigger_loop(self) -> None:
+        '''
+        Be careful, this is a infinte loop.
+        Put this off to another thread.
+        '''
+
+        while True:
+            pass
+
     def set_norm_ranges(self, ranges: dict[str, tuple[float, float]]) -> None:
         for param in ranges:
             if param in self.note.normal_ranges:
                 self.note.normal_ranges[param] = ranges[param]
 
-    def check(self) -> bool:
+    def check(self) -> None:
         for param in self.parameters:
             if self.parser.take_last_note(param) <= self.note.normal_ranges[param][0] or \
                     self.parser.take_last_note(param) >= self.note.normal_ranges[param][1]:
-                return False
-
-        return True
-
-    def error_message(self, parameter: str) -> str:
-        if parameter not in self.parameters:
-            return 'okay'
-
-        return f'{parameter} is out of normal range'
+                raise ValueError(f'{param} is out of normal range')
 
 
 class Painter:
-    def __init__(self) -> None:
+    def __init__(self, figure: Figure, axes: Axes, parser: CSVParser) -> None:
+        self.figure = figure
+        self.axes = axes
+        self.parser = parser
+
+    def draw_idle(self) -> None:
         pass
+
+    def draw_parameter(self, param: str) -> None:
+        values = self.parser.take_last_file(param)
 
 
 if __name__ == '__main__':

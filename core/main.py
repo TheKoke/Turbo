@@ -13,12 +13,16 @@ class Background(QThread):
         super().__init__()
 
 
-class MainWindow(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self, note: Note) -> None:
         super().__init__()
 
         self.parser = CSVParser(note)
         self.observer = Observer(note)
+
+        self.canvas = FigureCanvasQTAgg(Figure(figsize=(16, 9)))
+        self.axes = self.canvas.figure.axes
+        self.toolbar = NavigationToolbar2QT(self.canvas, self)
 
 
 class StartWindow(QWidget):
